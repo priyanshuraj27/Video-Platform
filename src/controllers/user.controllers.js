@@ -15,14 +15,14 @@ const registerUser = asyncHandler(async (req,res) => {
     // chech for user creation
     // send response
     const{fullName,email,username,password} = req.body;
-    console.log("email:",email);
+    // console.log("email:",email);
     // Validation 
     if(!fullName || !email || !username || !password){
         throw new ApiError(400,"Please provide all fields")
     }
 
     // Checking if user already exists
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{email},{username}]
     })
     if(existedUser){
@@ -36,13 +36,13 @@ const registerUser = asyncHandler(async (req,res) => {
     if(!avatarLocalPath){
         throw new ApiError(400,"Please provide avatar image");
     }
-
+    console.log("avatarLocalPath:",avatarLocalPath);
     // Upload images to cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage= await uploadOnCloudinary(coverImageLocalPath)
     // check if avatar is there otherwise database may fall
     if(!avatar){
-        throw new ApiError(400,"Please provide avatar image");
+        throw new ApiError(400,"Please provide avatar1 image");
     }
 
     // Create user object and enter in database
