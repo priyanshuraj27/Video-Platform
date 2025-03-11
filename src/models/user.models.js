@@ -29,9 +29,6 @@ const userSchema = new Schema({
         type : String, // Cloudinary URL
         required : true,
     },
-    avatar : {
-        type : String, // Cloudinary URL
-    },
     watchHistory : [{
         type :Schema.Types.ObjectId,
         ref : "Video"}
@@ -40,7 +37,7 @@ const userSchema = new Schema({
         type : String,
         required : [true,"Password is required"],   
     },
-    refreshtoken : {
+    refreshToken : {
         type : String,
     },
 },{timestamps:true})
@@ -54,6 +51,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
     return bcrypt.compare(password,this.password);
 }
 userSchema.methods.generateAccessToken = function(){
+    
     return jwt.sign({
         _id: this._id,
         username : this.username,
@@ -61,7 +59,9 @@ userSchema.methods.generateAccessToken = function(){
         fullName : this.fullName,
     },
     process.env.ACCESS_TOKEN_SECRET,
+    
     {expiresIn : process.env.ACCESS_TOKEN_EXPIRY}
+    
 )
 }
 userSchema.methods.generateRefreshToken = function(){

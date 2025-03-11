@@ -3,19 +3,31 @@ import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.models.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
-const generateAccessAndRefreshToken = async (user_ID) =>{
+const generateAccessAndRefreshTokens = async(userId) =>{
     try {
-        const user = await User.findById(user_ID)
-        const acessToken = user.generateAccessToken()
-        const refreshToken=user.generateRefreshToken()
+//         console.log("ACCESS_TOKEN_SECRET:", process.env.ACCESS_TOKEN_SECRET);
+// console.log("ACCESS_TOKEN_EXPIRY:", process.env.ACCESS_TOKEN_EXPIRY);
+
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+        // console.log("accessToken:",accessToken);
+        // console.log("refreshToken:",refreshToken);
         user.refreshToken = refreshToken
-        await user.save({validateBeforeSave:false}) //no need to validate
-        return {acessToken,refreshToken}
+        user.accessToken = accessToken
+        await user.save({ validateBeforeSave: false })
+
+        return {accessToken, refreshToken}
+
+
     } catch (error) {
-        throw new ApiError(500,"Token generation failed")
+        throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
 }
+
 const registerUser = asyncHandler(async (req,res) => {
     // get user details from frontend
     // validation
@@ -87,7 +99,10 @@ const loginUser = asyncHandler(async(req,res)=>{
   // send response
 
   // fetch the data from the user
+//   console.log("req.body:",req.body);
   const {username,email,password} = req.body;
+    // console.log("username:",username);
+    // console.log("email:",email);
 
   // validate the fields
   if(!username && !email){
@@ -107,7 +122,8 @@ const loginUser = asyncHandler(async(req,res)=>{
       throw new ApiError(401,"Invalid password")
   }
   // generate access token and refresh token
-    const {acessToken,refreshToken} = await generateAccessAndRefreshToken(user._id)
+//   console.log("user._id:",user._id);
+    const {accessToken,refreshToken} = await generateAccessAndRefreshTokens(user._id)
    const loggedInUser =  await User.findById(user._id).select("-password -refreshToken")
     
    // send cookie
@@ -115,11 +131,11 @@ const loginUser = asyncHandler(async(req,res)=>{
         httpOnly : true,
         secure : true
    }
-   return res.status(200).cookie("accessToken",acessToken,options)
+   return res.status(200).cookie("accessToken",accessToken,options)
     .cookie("refreshToken",refreshToken,options)
     .json(new ApiResponse(200,{
         user : loggedInUser,
-        accessToken : acessToken,
+        accessToken : accessToken,
         refreshToken : refreshToken
     },
     "User logged in"))
@@ -148,4 +164,5 @@ const logoutUser = asyncHandler(async(req,res)=>{
    .clearCookie("refreshToken",options)
    .json(new ApiResponse(200,undefined,"User logged out"))
 })
+
 export {registerUser,loginUser,logoutUser}
