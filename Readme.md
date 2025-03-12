@@ -1,6 +1,6 @@
 # Video Platform Backend
 
-This is the backend for a video platform application. It provides APIs for user authentication, video management, comments, likes, subscriptions,community Post and more.
+This is the backend for a video platform application. It provides APIs for user authentication, video management, comments, likes, subscriptions, and more.
 
 ## Tech Stack
 
@@ -15,6 +15,7 @@ This is the backend for a video platform application. It provides APIs for user 
 - **bcrypt**: Library to hash passwords
 - **cors**: Middleware for enabling Cross-Origin Resource Sharing
 - **cookie-parser**: Middleware for parsing cookies
+- **Postman**: API testing tool
 
 ## Project Structure
 
@@ -88,7 +89,7 @@ src/
     MONGODB_URI=<your-mongodb-uri>
     PORT=<your-port>
     CORS_ORIGIN=<your-cors-origin>
-    ACCESS_TOKEN_SECRET=<your-access-token-secret>
+    ACCESS_TOKEN=<your-access-token-secret>
     ACCESS_TOKEN_EXPIRY=<your-access-token-expiry>
     REFRESH_TOKEN_SECRET=<your-refresh-token-secret>
     REFRESH_TOKEN_EXPIRY=<your-refresh-token-expiry>
@@ -141,4 +142,37 @@ src/
 ### Like Routes
 
 - `POST /api/v1/likes` - Like a video or comment
-- `DELETE /api/v1/likes/:id` - Unlike a video or
+- `DELETE /api/v1/likes/:id` - Unlike a video or comment
+
+### Subscription Routes
+
+- `POST /api/v1/subscriptions` - Subscribe to a channel
+- `DELETE /api/v1/subscriptions/:id` - Unsubscribe from a channel
+
+### Playlist Routes
+
+- `GET /api/v1/playlist` - Get all playlists
+- `POST /api/v1/playlist` - Create a new playlist
+- `GET /api/v1/playlist/:id` - Get playlist details
+- `PATCH /api/v1/playlist/:id` - Update playlist details
+- `DELETE /api/v1/playlist/:id` - Delete a playlist
+
+### Tweet Routes
+
+- `GET /api/v1/tweets` - Get all tweets
+- `POST /api/v1/tweets` - Create a new tweet
+- `GET /api/v1/tweets/:id` - Get tweet details
+- `PATCH /api/v1/tweets/:id` - Update tweet details
+- `DELETE /api/v1/tweets/:id` - Delete a tweet
+
+### Dashboard Routes
+
+- `GET /api/v1/dashboard` - Get dashboard data
+
+### Healthcheck Routes
+
+- `GET /api/v1/healthcheck` - Check API health
+
+## API Testing with Postman
+
+Download and import the [Postman Collection](https://github.com/priyanshuraj27/Video-Platform.git) into Postman for testing API endpoints.
