@@ -1,15 +1,80 @@
 # Video Platform Backend
 
-This is the backend for a video platform application. It provides APIs for user authentication, video management, comments, likes, subscriptions, and more.
+This is the backend for a video platform application. It provides APIs for user authentication, video management, comments, likes, subscriptions,community Post and more.
+
+## Tech Stack
+
+- **Node.js**: JavaScript runtime environment
+- **Express.js**: Web framework for Node.js
+- **MongoDB**: NoSQL database
+- **Mongoose**: MongoDB object modeling tool
+- **JWT**: JSON Web Tokens for authentication
+- **Cloudinary**: Cloud storage for images and videos
+- **Multer**: Middleware for handling `multipart/form-data`
+- **dotenv**: Module to load environment variables
+- **bcrypt**: Library to hash passwords
+- **cors**: Middleware for enabling Cross-Origin Resource Sharing
+- **cookie-parser**: Middleware for parsing cookies
 
 ## Project Structure
 
+```
+.env
+.gitignore
+package.json
+Readme.md
+public/
+  temp/
+    .gitkeep
+src/
+  app.js
+  constant.js
+  index.js
+  controllers/
+    comment.controllers.js
+    dashboard.controllers.js
+    healthcheck.controllers.js
+    like.controllers.js
+    playlist.controllers.js
+    subscription.controllers.js
+    tweet.controllers.js
+    user.controllers.js
+    video.controllers.js
+  db/
+    index.js
+  middlewares/
+    auth.middleware.js
+    multer.middleware.js
+  models/
+    comment.models.js
+    like.models.js
+    playlist.models.js
+    subscription.models.js
+    tweet.models.js
+    user.models.js
+    video.models.js
+  routes/
+    comment.routes.js
+    dashboard.routes.js
+    healthcheck.routes.js
+    like.routes.js
+    playlist.routes.js
+    subscription.routes.js
+    tweet.routes.js
+    user.routes.js
+    video.routes.js
+  utils/
+    ApiError.js
+    ApiResponse.js
+    asyncHandler.js
+    cloudinary.js
+```
 
 ## Installation
 
 1. Clone the repository:
     ```sh
-    git clone <repository-url>
+    git clone https://github.com/priyanshuraj27/Video-Platform.git
     cd video-platform-backend
     ```
 
@@ -22,7 +87,7 @@ This is the backend for a video platform application. It provides APIs for user 
     ```
     MONGODB_URI=<your-mongodb-uri>
     PORT=<your-port>
-    =<CORS_ORIGINyour-cors-origin>
+    CORS_ORIGIN=<your-cors-origin>
     ACCESS_TOKEN_SECRET=<your-access-token-secret>
     ACCESS_TOKEN_EXPIRY=<your-access-token-expiry>
     REFRESH_TOKEN_SECRET=<your-refresh-token-secret>
@@ -76,35 +141,4 @@ This is the backend for a video platform application. It provides APIs for user 
 ### Like Routes
 
 - `POST /api/v1/likes` - Like a video or comment
-- `DELETE /api/v1/likes/:id` - Unlike a video or comment
-
-### Subscription Routes
-
-- `POST /api/v1/subscriptions` - Subscribe to a channel
-- `DELETE /api/v1/subscriptions/:id` - Unsubscribe from a channel
-
-### Playlist Routes
-
-- `GET /api/v1/playlist` - Get all playlists
-- `POST /api/v1/playlist` - Create a new playlist
-- `GET /api/v1/playlist/:id` - Get playlist details
-- `PATCH /api/v1/playlist/:id` - Update playlist details
-- `DELETE /api/v1/playlist/:id` - Delete a playlist
-
-### Tweet Routes
-
-- `GET /api/v1/tweets` - Get all tweets
-- `POST /api/v1/tweets` - Create a new tweet
-- `GET /api/v1/tweets/:id` - Get tweet details
-- `PATCH /api/v1/tweets/:id` - Update tweet details
-- `DELETE /api/v1/tweets/:id` - Delete a tweet
-
-### Dashboard Routes
-
-- `GET /api/v1/dashboard` - Get dashboard data
-
-### Healthcheck Routes
-
-- `GET /api/v1/healthcheck` - Check API health
-
-
+- `DELETE /api/v1/likes/:id` - Unlike a video or
