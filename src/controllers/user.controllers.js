@@ -145,8 +145,8 @@ const logoutUser = asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set : {
-                refreshToken : undefined
+            $unset : {
+                refreshToken : 1
             }
         },
         {
@@ -218,6 +218,8 @@ const changeCurrentPassword = asyncHandler(async(req,res)=>{
     // change the password
     // send response
     const {currentPassword,newPassword} = req.body;
+    console.log("current password ",currentPassword);
+    console.log("new password",newPassword);
     if(!currentPassword || !newPassword){
         throw new ApiError(400,"Please provide all fields")
     }
@@ -238,11 +240,13 @@ const changeCurrentPassword = asyncHandler(async(req,res)=>{
 })
 const getCurrentUser = asyncHandler(async(req,res)=>{
     return res.status(200)
-    .json(200,req.user,"Current User Fetched Successfully")
+    .json(new ApiResponse(200,req.user,"Current User Fetched Successfully"))
 })
 const updateAccountDetails = asyncHandler(async(req,res)=>{
     const {fullName,email} = req.body
-    if(!fullName || !email){
+    // console.log("fullName:",fullName);
+    // console.log("email:",email);
+    if(!fullName && !email){
         throw new ApiError(400,"All fields are required")
     }
     const user =await User.findByIdAndUpdate(
