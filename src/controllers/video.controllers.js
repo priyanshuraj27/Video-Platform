@@ -5,14 +5,42 @@ import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
-
-
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
-    
-})
+    try {
+        const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
+        const pageNumber = parseInt(page, 10);
+        const limitNumber = parseInt(limit, 10);
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Construct the search filter
+        let filter = {};
+        if (query) {
+            filter.title = { $regex: query, $options: "i" };
+        }
+        if (userId) {
+            filter.userId = userId;
+        }
+
+        // Sorting logic
+        const sortOptions = {};
+        sortOptions[sortBy] = sortType === "asc" ? 1 : -1;
+
+        // Fetch videos with pagination and sorting
+        const videos = await Video.find(filter)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limitNumber);
+
+        const totalVideos = await Video.countDocuments(filter);
+
+        res.status(200).json(
+            new ApiResponse(200, { videos, totalVideos }, "Videos fetched successfully")
+        );
+    } catch (error) {
+        res.status(500).json(new ApiError(500, "An error occurred while fetching videos"));
+    }
+})
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
     const user = req.user;
@@ -42,22 +70,27 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
         // Upload thumbnail to Cloudinary
         const thumbnailUpload = await uploadOnCloudinary(thumbnailLocalPath, "thumbnails");
-        if (!thumbnailUpload || !thumbnailUpload.secure_url) {
+        if (!thumbnailUpload || !thumbnailUpload.url) {
             throw new ApiError(500, "Failed to upload thumbnail.");
         }
-
+        console.log("video:-",videoUpload);
+        console.log("thumbnail:-",thumbnailUpload);
+        // console.log("Uploaded Successfully");
         // Create and save video entry in the database
         const newVideo = await Video.create({
             title,
             description,
-            videoFile: videoUpload.secure_url,
-            thumbnail: thumbnailUpload.secure_url,
+            videoFile: videoUpload.url,
+            thumbnail: thumbnailUpload.url,
             owner: user._id,
+            duration: videoUpload,
+            views: 0,
+            isPublished: false,
         });
-
+        // console.log("newVideo", newVideo);
         // Delete local files after successful upload
-        fs.unlinkSync(videoLocalPath);
-        fs.unlinkSync(thumbnailLocalPath);
+        // fs.unlinkSync(videoLocalPath);
+        // fs.unlinkSync(thumbnailLocalPath);
 
         res.status(201).json(new ApiResponse(201, { newVideo }, "Video published successfully."));
     } catch (error) {
