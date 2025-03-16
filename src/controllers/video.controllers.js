@@ -160,7 +160,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, {}, "Video deleted successfully"));
 });
 
-
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     const user = req.user;
