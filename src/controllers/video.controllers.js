@@ -73,8 +73,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
         if (!thumbnailUpload || !thumbnailUpload.url) {
             throw new ApiError(500, "Failed to upload thumbnail.");
         }
-        console.log("video:-",videoUpload);
-        console.log("thumbnail:-",thumbnailUpload);
+        // console.log("video:-",videoUpload);
+        // console.log("thumbnail:-",thumbnailUpload);
         // console.log("Uploaded Successfully");
         // Create and save video entry in the database
         const newVideo = await Video.create({
@@ -83,7 +83,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
             videoFile: videoUpload.url,
             thumbnail: thumbnailUpload.url,
             owner: user._id,
-            duration: videoUpload,
+            duration: videoUpload.duration,
             views: 0,
             isPublished: false,
         });
